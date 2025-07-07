@@ -3,65 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyecto de Electromovilidad</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Asesor de Vehículos Eléctricos</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        :root {
+            --rosa-claro: #ffebee;
+            --rosa-palido: #fce4ec;
+            --rosa-primario: #f8bbd0;
+            --rosa-secundario: #f48fb1;
+            --rosa-acento: #ff80ab;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--rosa-palido);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--rosa-secundario);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--rosa-acento);
+        }
+
+        section {
+            padding: 25px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            max-width: 1000px;
+        }
+
+        h1, h2, h3 {
+            color: #d81b60;
+        }
+
+        #map {
+            height: 500px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid var(--rosa-primario);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--rosa-primario);
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--rosa-secundario);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--rosa-acento);
+        }
+
+        .result-card {
+            background-color: var(--rosa-claro);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--rosa-acento);
+        }
+
+        .car-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            flex: 1 1 300px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-top: 3px solid var(--rosa-primario);
+        }
+
+        .eco-impact {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .eco-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--rosa-secundario);
+            color: white;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 15px;
+                margin: 15px 10px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 5px 0;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Electromovilidad</h1>
+        <h1>Asesor de Vehículos Eléctricos</h1>
         <nav>
             <ul>
                 <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#mapa">Mapa</a></li>
                 <li><a href="#calculadora">Calculadora</a></li>
-                <li><a href="#info">Información</a></li>
+                <li><a href="#mapa">Estaciones de Carga</a></li>
+                <li><a href="#recomendaciones">Recomendaciones</a></li>
                 <li><a href="#contacto">Contacto</a></li>
             </ul>
         </nav>
     </header>
 
     <section id="inicio">
-        <h2>Bienvenido al Futuro de la Movilidad</h2>
-        <p>Descubre cómo los vehículos eléctricos están transformando el transporte.</p>
+        <h2>Encuentra el vehículo eléctrico perfecto para ti</h2>
+        <p>Descubre cuánto puedes ahorrar, qué modelo se adapta a tus necesidades y cómo contribuyes al medio ambiente cambiando a un vehículo eléctrico.</p>
+    </section>
+
+    <section id="calculadora">
+        <h2>Calculadora Personalizada</h2>
+        <form id="calculator-form">
+            <div class="form-group">
+                <label for="km">Kilómetros que manejas al año:</label>
+                <input type="number" id="km" required min="1000" step="100">
+            </div>
+            
+            <div class="form-group">
+                <label for="current-car">Tipo de vehículo actual:</label>
+                <select id="current-car" required>
+                    <option value="">Selecciona tu vehículo</option>
+                    <option value="gasolina">Gasolina</option>
+                    <option value="diesel">Diésel</option>
+                    <option value="hibrido">Híbrido</option>
+                    <option value="electrico">Eléctrico (quiero actualizar)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="budget">Presupuesto aproximado (USD):</label>
+                <input type="number" id="budget" min="10000" step="1000">
+            </div>
+            
+            <button type="submit">Calcular recomendación</button>
+        </form>
+        
+        <div id="resultados">
+            <!-- Resultados dinámicos se insertarán aquí -->
+        </div>
     </section>
 
     <section id="mapa">
         <h2>Mapa de Estaciones de Carga</h2>
-        <div id="map"></div> <!-- Aquí irá el mapa interactivo -->
+        <p>Encuentra las estaciones de carga más cercanas a tu ubicación:</p>
+        <div id="map"></div>
+        <div class="form-group" style="margin-top: 15px;">
+            <label for="location-search">Buscar estaciones cerca de:</label>
+            <input type="text" id="location-search" placeholder="Ingresa una ciudad o dirección">
+            <button id="search-btn" type="button">Buscar</button>
+        </div>
     </section>
 
-    <section id="calculadora">
-        <h2>Calculadora de Ahorro</h2>
-        <form id="calculator-form">
-            <label for="km">Kilómetros recorridos al año:</label>
-            <input type="number" id="km" required>
-            <button type="submit">Calcular</button>
-        </form>
-        <p id="resultado"></p>
+    <section id="recomendaciones">
+        <h2>Recomendaciones de Vehículos</h2>
+        <div id="car-recommendations">
+            <p>Complete la calculadora para obtener recomendaciones personalizadas.</p>
+        </div>
     </section>
 
     <section id="info">
-        <h2>Información sobre Electromovilidad</h2>
-        <p>Aquí puedes agregar información detallada sobre vehículos eléctricos, beneficios ambientales, etc.</p>
+        <h2>Beneficios Ambientales</h2>
+        <div class="eco-impact">
+            <span class="eco-icon">🌱</span>
+            <p>Un vehículo eléctrico puede reducir tus emisiones de CO2 en un 50-70% comparado con uno de gasolina, dependiendo de la fuente de energía eléctrica en tu región.</p>
+        </div>
     </section>
 
     <section id="contacto">
         <h2>Contacto</h2>
         <form id="contact-form">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            <label for="mensaje">Mensaje:</label>
-            <textarea id="mensaje" required></textarea>
-            <button type="submit">Enviar</button>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="mensaje">Mensaje:</label>
+                <textarea id="mensaje" rows="5" required></textarea>
+            </div>
+            
+            <button type="submit">Enviar consulta</button>
         </form>
     </section>
 
     <footer>
-        <p>&copy; 2023 Proyecto de Electromovilidad</p>
+        <p>&copy; 2023 Asesor de Vehículos Eléctricos | Contribuyendo a un futuro más sostenible</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Base de datos de vehículos eléctricos
+        const electricCars = [
+            {
+                name: "Nissan Leaf",
+                range: 240,
+                price: 30000,
+                efficiency: 6.5, // km/kWh
+                suitableFor: "urban",
+                features: ["Asistente de conducción", "Carga rápida", "Conectividad"]
+            },
+            {
+                name: "Tesla Model 3",
+                range: 430,
+                price: 45000,
+                efficiency: 6.2,
+                suitableFor: "long-distance",
+                features: ["Autopilot", "Pantalla táctil", "Aceleración rápida"]
+            },
+            {
+                name: "Chevrolet Bolt EV",
+                range: 380,
+                price: 35000,
+                efficiency: 6.0,
+                suitableFor: "mixed",
+                features: ["Carga rápida", "Espacioso", "Asistente de estacionamiento"]
+            },
+            {
+                name: "Hyundai Kona Electric",
+                range: 415,
+                price: 38000,
+                efficiency: 6.3,
+                suitableFor: "mixed",
+                features: ["Sistema infoentretenimiento", "Asistente de conducción", "Diseño SUV"]
+            }
+        ];
+
+        // Mapa interactivo
+        let map;
+        let markers = [];
+        
+        function initMap() {
+            map = L.map('map').setView([19.4326, -99.1332], 12); // Centro en Ciudad de México
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Cargar estaciones de carga (simulado)
+            loadChargingStations();
+        }
+        
+        function loadChargingStations(lat = 19.4326, lng = -99.1332) {
+            // Limpiar marcadores existentes
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            
+            // Simulación de API - en un caso real usarías una API como OpenChargeMap
+            const simulatedStations = [
+                {name: "Estación Centro", lat: 19.4326, lng: -99.1332},
+                {name: "Estación Polanco", lat: 19.4330, lng: -99.1900},
+                {name: "Estación Condesa", lat: 19.4100, lng: -99.1700},
+                {name: "Estación Santa Fe", lat: 19.3600, lng: -99.2600},
+                {name: "Estación Coyoacán", lat: 19.3500, lng: -99.1600}
+            ];
+            
+            simulatedStations.forEach(station => {
+                const marker = L.marker([station.lat, station.lng]).addTo(map)
+                    .bindPopup(`<b>${station.name}</b><br>24/7<br>Tipo: CCS/CHAdeMO`);
+                markers.push(marker);
+            });
+        }
+        
+        // Buscar ubicación
+        document.getElementById('search-btn').addEventListener('click', function() {
+            const location = document.getElementById('location-search').value;
+            if (location.includes("Ciudad de México") || location.includes("CDMX")) {
+                map.setView([19.4326, -99.1332], 13);
+                loadChargingStations();
+            } else if (location.includes("Monterrey")) {
+                map.setView([25.6866, -100.3161], 13);
+                loadChargingStations(25.6866, -100.3161);
+            } else if (location.includes("Guadalajara")) {
+                map.setView([20.6597, -103.3496], 13);
+                loadChargingStations(20.6597, -103.3496);
+            } else {
+                alert("Ubicación no reconocida. Mostrando estaciones en CDMX por defecto.");
+                map.setView([19.4326, -99.1332], 13);
+                loadChargingStations();
+            }
+        });
+
+        // Calculadora de ahorro
+        document.getElementById('calculator-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const km = parseFloat(document.getElementById('km').value);
+            const currentCarType = document.getElementById('current-car').value;
+            const budget = document.getElementById('budget').value ? parseFloat(document.getElementById('budget').value) : 50000;
+            
+            // Cálculos
+            const costos = {
+                gasolina: 0.15,  // USD por km
+                diesel: 0.12,
+                hibrido: 0.08,
+                electrico: 0.05
+            };
+            
+            const currentCost = km * costos[currentCarType];
+            const electricCost = km * costos.electrico;
+            const annualSavings = currentCost - electricCost;
+            
+            // Recomendación de vehículo
+            let recommendedCars = electricCars
+                .filter(car => car.price <= budget * 1.1) // +10% de margen
+                .sort((a, b) => {
+                    // Priorizar rango para usuarios que manejan mucho
+                    if (km > 20000) return b.range - a.range;
+                    // Priorizar precio para presupuestos ajustados
+                    if (budget < 35000) return a.price - b.price;
+                    // Balance general
+                    return (b.range/1000 + b.efficiency) - (a.range/1000 + a.efficiency);
+                });
+            
+            if (recommendedCars.length === 0) {
+                recommendedCars = electricCars.sort((a, b) => a.price - b.price).slice(0, 2);
+            } else if (recommendedCars.length > 2) {
+                recommendedCars = recommendedCars.slice(0, 2);
+            }
+            
+            // Mostrar resultados
+            const resultadosHTML = `
+                <div class="result-card">
+                    <h3>Resultados para ${km.toLocaleString()} km/año</h3>
+                    <p><strong>Ahorro anual estimado:</strong> $${annualSavings.toFixed(2)} USD</p>
+                    <p><strong>Tiempo de recuperación de inversión:</strong> ${(recommendedCars[0].price / annualSavings).toFixed(1)} años</p>
+                    
+                    <div class="eco-impact">
+                        <span class="eco-icon">🌍</span>
+                        <p>Reducción estimada de CO2: ${(km * 0.12).toFixed(0)} kg al año (equivalente a ${(km * 0.12 / 20).toFixed(1)} árboles plantados)</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('resultados').innerHTML = resultadosHTML;
+            
+            // Mostrar recomendaciones
+            const recommendationsHTML = `
+                <h3>Vehículos recomendados para ti</h3>
+                <div class="car-features">
+                    ${recommendedCars.map(car => `
+                        <div class="feature-card">
+                            <h4>${car.name}</h4>
+                            <p><strong>Precio:</strong> $${car.price.toLocaleString()} USD</p>
+                            <p><strong>Autonomía:</strong> ${car.range} km</p>
+                            <p><strong>Eficiencia:</strong> ${car.efficiency} km/kWh</p>
+                            <p><strong>Características:</strong></p>
+                            <ul>
+                                ${car.features.map(f => `<li>${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h4>Consejos para tu viaje</h4>
+                    <p>Con un vehículo eléctrico de ${recommendedCars[0].range} km de autonomía:</p>
+                    <ul>
+                        <li>Podrías recorrer ${(km/365).toFixed(1)} km diarios sin necesidad de cargar todos los días</li>
+                        <li>En viajes largos, necesitarías aproximadamente ${Math.ceil(km / recommendedCars[0].range * 1.2)} paradas de carga para un viaje de ${km} km</li>
+                        <li>El costo de carga sería de aproximadamente $${(km / recommendedCars[0].efficiency * 0.15).toFixed(2)} USD al año (a $0.15 USD/kWh)</li>
+                    </ul>
+                </div>
+            `;
+            
+            document.getElementById('car-recommendations').innerHTML = recommendationsHTML;
+        });
+
+        // Inicializar el mapa al cargar la página
+        window.onload = initMap;
+    </script>
 </body>
 </html>
