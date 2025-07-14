@@ -1,7 +1,5 @@
-# Electromovilidad
-El archivo **README** es esencial para cualquier proyecto, ya que proporciona una descripción clara del mismo, cómo usarlo y cómo contribuir. A continuación, te muestro cómo podrías estructurar el **README** para tu proyecto de electromovilidad con el mapa de estaciones de carga en México:
-
----
+# page-electromovilidad
+<img width="275" height="763" alt="image" src="https://github.com/user-attachments/assets/5c91b461-4121-4204-863b-3e877f716791" />
 
 # **Proyecto de Electromovilidad: Mapa de Estaciones de Carga en México**
 
@@ -104,7 +102,8 @@ Este proyecto está bajo la licencia **MIT**. Para más detalles, consulta el ar
 ---
 
 ## **Capturas de Pantalla**
-![Mapa de Estaciones de Carga](img/mapa.png)  
+<img width="841" height="662" alt="image" src="https://github.com/user-attachments/assets/a38cc9cb-97e3-4de6-afc6-d958769577f5" />
+ 
 *Captura del mapa interactivo.*
 
 ---
@@ -119,10 +118,3 @@ Este proyecto está bajo la licencia **MIT**. Para más detalles, consulta el ar
 ¡Gracias por visitar este proyecto! Si tienes alguna pregunta o sugerencia, no dudes en contactarme. 🚗⚡
 
 ---
-
-### **Notas adicionales**
-- Si usas datos reales de una API como Open Charge Map, asegúrate de mencionarlo en el README y proporcionar el enlace a la API.
-- Incluye capturas de pantalla o un GIF del proyecto en funcionamiento para hacerlo más atractivo.
-- Si el proyecto está en línea (por ejemplo, en GitHub Pages), agrega el enlace en la sección de **Instalación y Uso**.
-
-¡Con este README, tu proyecto estará bien documentado y listo para que otros lo usen y contribuyan! 🚀
